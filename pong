@@ -1,0 +1,62 @@
+// In terms of direction, 1 is leftmost point on screen, 26 is rightmost
+// 1 is highest point on screen, 10 is the loewst (think rows from top to bottom)
+
+1→X // x-coordinate of ball
+1→Y // y-coordinate of ball
+5→P // x- coordinate of paddle (y-coordinate is fixed)
+0→L // bool for lose or win
+1→C // x-direction of the ball
+1→R // y- direction of the ball
+0→S // score
+
+ClrHome
+Input "SELECT SPEED 1-10:",A
+// If the user types something out of bounds, change input to upper or lower bound
+min(10,A)→A
+max(0,A)→A
+ClrHome
+
+// For as long as the user doesn’t press [CLEAR] or lose
+Repeat G=45 or L=1
+	// Delay time to set the speed of the game
+    For(T,1,50*(10–A))
+	End
+	// Check for key press (left,right,clear)
+  	getKey→G
+    
+    If X=1 : 1→C // hit left wall, go right
+    If X=26 : –1→C // hit right wall, go left
+    If Y=1 : 1→R // hit top wall, go down
+    If Y=10 // hit bottom…
+    Then
+    	If X<P or X>P+3 // If missed the paddle
+    	Then
+      		1→L
+    	Else // Deflect and increment score
+      		–1→R
+      		S+1→S
+    	End
+    End
+    If G // When key is pressed
+    Then
+        // Remove previous paddle display
+    	Output(10,P,"    ") // syntax: Output(row, column, output)
+    	// Figure out new position
+    	If G=24 and P>1 : P–2→P // 24 is left key, move paddle 2 columns left
+    	If G=26 and P<23 : P+2→P // 26 is right key, move paddle 2 columns right
+    	Output(10,P,"----") //
+    End
+
+    Output(Y,X," ") // Remove previous ball display
+    // Make ball continue to travel linearlly
+    X+C→X
+    Y+R→Y
+    // If no losses, continue showing the ball (which is the 0)
+    If L=0 : Output(Y,X,0)
+End
+// If game was lost or terminated
+ClrHome
+Output(4,9,"GAME OVER")
+Output(5,10,"SCORE:")
+Output(5,16,S)
+"
